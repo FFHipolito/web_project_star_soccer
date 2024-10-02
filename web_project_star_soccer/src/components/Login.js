@@ -1,13 +1,21 @@
 import React, { useState, useRef } from "react";
+import * as auth from "../utils/auth";
 
-const Login = () => {
+const Login = ({ handleLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const formRef = useRef();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(email, password);
+    auth
+      .authorize(email, password)
+      .then(() => {
+        handleLogin(email);
+      })
+      .catch((error) => {
+        console.error("Login error:", error);
+      });
   };
 
   return (

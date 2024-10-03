@@ -1,4 +1,4 @@
-.login {
+.signup {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -7,20 +7,20 @@
   color: #fff;
 }
 
-.login__welcome {
+.signup__welcome {
   margin: 50px 0;
   font-size: 24px;
   font-weight: 900;
   color: #00112c;
 }
 
-.login__form {
+.signup__form {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.login__input {
+.signup__input {
   width: 328px;
   margin-bottom: 10px;
   padding: 8px 16px;
@@ -32,18 +32,18 @@
   line-height: 1.4;
 }
 
-.login__input:focus {
+.signup__input:focus {
   box-shadow: 0 0 0 0;
   border: 1px solid black;
   outline: 0;
 }
 
-.login__button-container {
+.signup__button-container {
   display: flex;
   justify-content: center;
 }
 
-.login__button {
+.signup__button {
   width: 360px;
   background-color: #0abf53;
   color: white;
@@ -56,11 +56,11 @@
   font-weight: 400;
 }
 
-.login__button:hover {
+.signup__button:hover {
   background-color: #1d8230;
 }
 
-.signup__message {
+.login__message {
   margin: 7px auto 80px;
   color: #00112c;
   font-size: 14px;
@@ -69,19 +69,19 @@
 }
 
 @media only screen and (max-width: 683px) {
-  .login {
+  .signup {
     width: 320px;
   }
 
-  .login__form {
+  .signup__form {
     width: 320px;
   }
 
-  .login__input {
+  .signup__input {
     width: 260px;
   }
 
-  .login__button {
+  .signup__button {
     width: 260px;
   }
 }

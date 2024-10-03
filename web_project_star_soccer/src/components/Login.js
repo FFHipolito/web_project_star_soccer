@@ -1,17 +1,19 @@
 import React, { useState, useRef } from "react";
-import * as auth from "../utils/auth";
+import { Link, useNavigate } from "react-router-dom";
+import { authorize } from "../utils/auth";
 
-const Login = ({ handleLogin }) => {
+function Login({ handleLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const formRef = useRef();
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    auth
-      .authorize(email, password)
+    authorize(email, password)
       .then(() => {
         handleLogin(email);
+        navigate("/");
       })
       .catch((error) => {
         console.error("Login error:", error);
@@ -20,7 +22,7 @@ const Login = ({ handleLogin }) => {
 
   return (
     <div className="login">
-      <h2 className="login__welcome">Login</h2>
+      <h2 className="login__welcome">Welcome back!</h2>
       <form onSubmit={handleSubmit} className="login__form" ref={formRef}>
         <input
           type="email"
@@ -47,8 +49,14 @@ const Login = ({ handleLogin }) => {
           </button>
         </div>
       </form>
+      <p className="signup__message">
+        Don't have an account yet?{" "}
+        <Link className="link" to="/signup">
+          Sign up here!
+        </Link>
+      </p>
     </div>
   );
-};
+}
 
 export default Login;

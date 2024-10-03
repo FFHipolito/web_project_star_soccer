@@ -23,11 +23,23 @@ function App() {
     localStorage.setItem("userEmail", email);
   };
 
+  const handleLogout = () => {
+    setLoggedIn(false);
+    setUserEmail("");
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("jwt");
+  };
+
   return (
     <BrowserRouter>
       <div className="page">
         {/* <CurrentUserContext.Provider value={currentUser}> */}
-        <Header />
+        <Header
+          loggedIn={loggedIn}
+          userEmail={userEmail}
+          handleLogout={handleLogout}
+        />
         <Routes>
           <Route path="/login" element={<Login handleLogin={handleLogin} />} />
           <Route path="*" element={<Login handleLogin={handleLogin} />} />

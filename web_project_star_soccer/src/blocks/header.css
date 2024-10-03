@@ -4,8 +4,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 45px 0;
-  border-bottom: 1px solid #00112c;
+  padding: 35px 0;
 }
 
 .header__button {
@@ -24,7 +23,7 @@
 }
 
 .header__logo {
-  width: 126px;
+  width: 110px;
 }
 
 .header__icon {

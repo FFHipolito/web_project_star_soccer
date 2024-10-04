@@ -3,7 +3,7 @@ import { userMock, matchMock } from "../mock-data";
 
 function Main() {
   // TODO remove hardcode below after be integration
-  const hasNextMatch = false;
+  const hasNextMatch = true;
 
   const title = hasNextMatch ? "Next Match" : "There is no match created yet.";
   return (
@@ -28,9 +28,11 @@ function Main() {
             I gonna play!
           </button>
           {userMock.isAdmin && (
-            <button type="button" className="main__button">
-              See players
-            </button>
+            <Link to="/players">
+              <button type="button" className="main__button">
+                See players
+              </button>
+            </Link>
           )}
         </>
       )}

@@ -8,6 +8,7 @@ import Footer from "../Footer";
 import Main from "../Main";
 import EditProfile from "../EditProfile";
 import CreateMatch from "../CreateMatch";
+import PlayerList from "../PlayerList";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(
@@ -52,6 +53,7 @@ function App() {
           <Route path="/" element={<Main />} />
           <Route path="/edit-profile" element={<EditProfile />} />
           <Route path="/create-match" element={<CreateMatch />} />
+          <Route path="/players" element={<PlayerList />} />
         </Routes>
         <Footer />
         {/* </CurrentUserContext.Provider> */}

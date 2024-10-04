@@ -2,7 +2,7 @@ export const userMock = {
   name: "Fernando",
   email: "email@email.com",
   phone: "(99)99999-9999",
-  isAdmin: false,
+  isAdmin: true,
 };
 
 export const matchMock = {

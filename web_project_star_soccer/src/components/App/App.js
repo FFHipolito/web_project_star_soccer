@@ -7,6 +7,7 @@ import Signup from "../Signup";
 import Footer from "../Footer";
 import Main from "../Main";
 import EditProfile from "../EditProfile";
+import CreateMatch from "../CreateMatch";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(
@@ -50,6 +51,7 @@ function App() {
           />
           <Route path="/" element={<Main />} />
           <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/create-match" element={<CreateMatch />} />
         </Routes>
         <Footer />
         {/* </CurrentUserContext.Provider> */}

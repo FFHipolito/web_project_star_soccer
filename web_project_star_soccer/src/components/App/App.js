@@ -6,6 +6,7 @@ import Login from "../Login";
 import Signup from "../Signup";
 import Footer from "../Footer";
 import Main from "../Main";
+import EditProfile from "../EditProfile";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(
@@ -48,6 +49,7 @@ function App() {
             element={<Signup handleLogin={handleLogin} />}
           />
           <Route path="/" element={<Main />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
         </Routes>
         <Footer />
         {/* </CurrentUserContext.Provider> */}

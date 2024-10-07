@@ -8,7 +8,7 @@
 
 .player__list_title {
   text-align: center;
-  margin: 50px 0;
+  margin: 10px 0;
   font-size: 24px;
   font-weight: 900;
   color: #00112c;
@@ -57,7 +57,7 @@ th {
 }
 
 .player__list_cancel {
-  margin: 7px auto 80px;
+  margin: 7px auto;
   color: #00112c;
   font-size: 14px;
   font-weight: 400;

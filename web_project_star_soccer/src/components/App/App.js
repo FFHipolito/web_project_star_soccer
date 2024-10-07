@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState } from "react";
-// import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
+import { useEffect, useState } from "react";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import Header from "../Header";
 import Login from "../Login";
 import Signup from "../Signup";
@@ -9,54 +9,134 @@ import Main from "../Main";
 import EditProfile from "../EditProfile";
 import CreateMatch from "../CreateMatch";
 import PlayerList from "../PlayerList";
+import api from "../../utils/api";
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(
-    localStorage.getItem("loggedIn") ? true : false
-  );
+  const loggedInInitialValue = localStorage.getItem("loggedIn") ? true : false;
+  const userInitialValues = {
+    id: "",
+    name: "",
+    email: "",
+    phone: "",
+    isAdmin: false,
+  };
+  const [loggedIn, setLoggedIn] = useState(loggedInInitialValue);
+  const [user, setUser] = useState(userInitialValues);
+  const [match, setMatch] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const [userEmail, setUserEmail] = useState(
-    localStorage.getItem("userEmail") || ""
-  );
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      getCurrentUser();
+      getCurrentMatch();
+    } else {
+      handleLogout();
+    }
+  }, []);
 
-  const handleLogin = (email) => {
+  const getCurrentUser = () => {
+    api
+      .getUserInfo()
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((error) => setErrorMessage(error.message));
+  };
+
+  const getCurrentMatch = () => {
+    api.getMatch().then((response) => {
+      setMatch(response.data);
+    });
+  };
+
+  const handleLogin = () => {
+    getCurrentUser();
+    getCurrentMatch();
     setLoggedIn(true);
-    setUserEmail(email);
     localStorage.setItem("loggedIn", "true");
-    localStorage.setItem("userEmail", email);
   };
 
   const handleLogout = () => {
     setLoggedIn(false);
-    setUserEmail("");
+    setUser(userInitialValues);
+    setMatch({});
     localStorage.removeItem("loggedIn");
-    localStorage.removeItem("userEmail");
     localStorage.removeItem("jwt");
+  };
+
+  const handleUpdateUser = (userData) => {
+    api
+      .updateUserInfo(userData)
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  };
+
+  const handleMatchSubscription = () => {
+    api
+      .subscribeMatch(match.id, user.id)
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  };
+
+  const handleCreateMatch = (matchData) => {
+    api
+      .createMatch(matchData)
+      .then((response) => {
+        setMatch(response.data);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
   };
 
   return (
     <BrowserRouter>
       <div className="page">
-        {/* <CurrentUserContext.Provider value={currentUser}> */}
-        <Header
-          loggedIn={loggedIn}
-          userEmail={userEmail}
-          handleLogout={handleLogout}
-        />
-        <Routes>
-          <Route path="/login" element={<Login handleLogin={handleLogin} />} />
-          <Route path="*" element={<Login handleLogin={handleLogin} />} />
-          <Route
-            path="/signup"
-            element={<Signup handleLogin={handleLogin} />}
-          />
-          <Route path="/" element={<Main />} />
-          <Route path="/edit-profile" element={<EditProfile />} />
-          <Route path="/create-match" element={<CreateMatch />} />
-          <Route path="/players" element={<PlayerList />} />
-        </Routes>
-        <Footer />
-        {/* </CurrentUserContext.Provider> */}
+        <CurrentUserContext.Provider value={user}>
+          <Header loggedIn={loggedIn} handleLogout={handleLogout} />
+          <Routes>
+            <Route
+              path="/login"
+              element={<Login handleLogin={handleLogin} />}
+            />
+            <Route path="*" element={<Login handleLogin={handleLogin} />} />
+            <Route
+              path="/signup"
+              element={<Signup handleLogin={handleLogin} />}
+            />
+            <Route
+              path="/"
+              element={
+                <Main
+                  match={match}
+                  handleSubscription={handleMatchSubscription}
+                />
+              }
+            />
+            <Route
+              path="/edit-profile"
+              element={<EditProfile handleUpdateUser={handleUpdateUser} />}
+            />
+            <Route
+              path="/create-match"
+              element={<CreateMatch handleCreateMatch={handleCreateMatch} />}
+            />
+            <Route
+              path="/players"
+              element={<PlayerList players={match.players} />}
+            />
+          </Routes>
+          <Footer />
+        </CurrentUserContext.Provider>
       </div>
     </BrowserRouter>
   );

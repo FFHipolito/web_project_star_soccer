@@ -5,6 +5,7 @@ import { authorize } from "../utils/auth";
 function Login({ handleLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const formRef = useRef();
   const navigate = useNavigate();
 
@@ -12,17 +13,18 @@ function Login({ handleLogin }) {
     e.preventDefault();
     authorize(email, password)
       .then(() => {
-        handleLogin(email);
+        handleLogin();
         navigate("/");
       })
       .catch((error) => {
-        console.error("Login error:", error);
+        setErrorMessage(error.message);
       });
   };
 
   return (
     <div className="login">
       <h2 className="login__welcome">Welcome back!</h2>
+      {errorMessage && <span className="signup__error">{errorMessage}</span>}
       <form onSubmit={handleSubmit} className="login__form" ref={formRef}>
         <input
           type="email"

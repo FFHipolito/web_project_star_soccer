@@ -1,105 +1,109 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { userMock } from "../mock-data";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import api from "../utils/api";
 
-function EditProfile() {
-  const [hasChange, setHasChange] = useState(false);
-  const [userDetails, setUserDetails] = useState({
-    name: userMock.name,
-    email: userMock.email,
-    phone: userMock.phone,
-    newPass: "",
-    newPassConfirm: "",
-  });
-
+function EditProfile({ handleUpdateUser }) {
+  const user = useContext(CurrentUserContext);
   const formRef = useRef();
   const navigate = useNavigate();
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
+  const [phone, setPhone] = useState(user.phone);
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = () => {
-    console.log("form sent");
-    // add edit request
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const isFormValid = validateForm();
+    if (!isFormValid) return;
+    handleUpdateUser({ name, email, phone, password });
     navigate("/");
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUserDetails((prevData) => {
-      return {
-        ...prevData,
-        [name]: value,
-      };
-    });
-
-    setHasChange(() => {
-      if (name === "newPass" || name === "newPassConfirm") return value !== "";
-      return userMock[name] !== value.trimEnd();
-    });
+  const validateForm = () => {
+    if (
+      name === user.name &&
+      email === user.email &&
+      phone === user.phone &&
+      password === "" &&
+      passwordConfirmation === ""
+    ) {
+      setErrorMessage("Nothing was changed!");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 2000);
+      return false;
+    }
+    if (password !== passwordConfirmation) {
+      setErrorMessage("Password confirmation is not the same!");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 2000);
+      return false;
+    }
+    return true;
   };
 
   return (
     <div className="edit__profile">
       <h2 className="edit__profile_welcome">Edit Profile</h2>
+      {errorMessage && (
+        <span className="edit__profile_error">{errorMessage}</span>
+      )}
       <form
         onSubmit={handleSubmit}
         className="edit__profile_form"
         ref={formRef}
       >
         <input
-          id="name"
           type="name"
-          name="name"
-          value={userDetails.name}
-          onChange={handleChange}
+          value={name}
+          id="name"
+          onChange={(e) => setName(e.target.value)}
           placeholder="Name"
           required
           className="edit__profile_input"
         />
         <input
-          id="email"
           type="email"
-          name="email"
-          value={userDetails.email}
-          onChange={handleChange}
+          value={email}
+          id="email"
+          onChange={(e) => setEmail(e.target.value)}
           placeholder="E-mail"
           required
           className="edit__profile_input"
         />
         <input
-          id="phone"
           type="text"
-          name="phone"
-          value={userDetails.phone}
-          onChange={handleChange}
+          value={phone}
+          id="phone"
+          onChange={(e) => setPhone(e.target.value)}
           placeholder="Phone (99) 9999-9999"
           required
           className="edit__profile_input"
         />
         <input
-          id="password"
           type="password"
-          name="newPass"
-          value={userDetails.newPass}
-          onChange={handleChange}
-          placeholder="New password"
+          value={password}
+          id="password"
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
           minLength={6}
           className="edit__profile_input"
         />
         <input
-          id="password-confirmation"
           type="password"
-          name="newPassConfirm"
-          value={userDetails.newPassConfirm}
-          onChange={handleChange}
+          value={passwordConfirmation}
+          id="password-confirmation"
+          onChange={(e) => setPasswordConfirmation(e.target.value)}
           placeholder="Confirm new password"
           minLength={6}
           className="edit__profile_input"
         />
         <div className="edit__profile_button-container">
-          <button
-            type="submit"
-            className={`edit__profile_button ${!hasChange && "disabled"}`}
-            disabled={!hasChange}
-          >
+          <button type="submit" className="edit__profile_button">
             Confirm changes
           </button>
         </div>

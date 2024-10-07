@@ -1,18 +1,21 @@
 import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { formatDate } from "../utils/format-date";
+import { getDateFormatted } from "../utils/format-date";
 
-function CreateMatch() {
+function CreateMatch({ handleCreateMatch }) {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [dateMin, setDateMin] = useState(formatDate(new Date()));
+  const [dateMin, setDateMin] = useState(getDateFormatted());
 
   const formRef = useRef();
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // add create match api request
+    handleCreateMatch({
+      date,
+      time,
+    });
     navigate("/");
   };
 

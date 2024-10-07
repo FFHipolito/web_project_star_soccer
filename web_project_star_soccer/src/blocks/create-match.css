@@ -8,7 +8,7 @@
 }
 
 .create__match_welcome {
-  margin: 50px 0;
+  margin: 10px 0;
   font-size: 24px;
   font-weight: 900;
   color: #00112c;
@@ -70,7 +70,7 @@
 }
 
 .create__match_cancel {
-  margin: 7px auto 80px;
+  margin: 7px auto;
   color: #00112c;
   font-size: 14px;
   font-weight: 400;

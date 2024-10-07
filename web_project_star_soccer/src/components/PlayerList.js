@@ -1,10 +1,6 @@
 import { Link } from "react-router-dom";
-import { playerlistMock } from "../mock-data";
 
-function PlayerList() {
-  const playerList = playerlistMock();
-  console.log(playerList);
-
+function PlayerList({ players }) {
   return (
     <div className="player__list">
       <h2 className="player__list_title">Player list</h2>
@@ -12,7 +8,7 @@ function PlayerList() {
         <table className="player__list_table">
           <thead className="player__list_table_head">
             <tr>
-              {playerList.length === 0 ? (
+              {players.length === 0 ? (
                 <th>There is no player registered yet.</th>
               ) : (
                 <>
@@ -24,7 +20,7 @@ function PlayerList() {
             </tr>
           </thead>
           <tbody className="player__list_table_body">
-            {playerList.map((el, index) => (
+            {players.map((el, index) => (
               <tr key={index}>
                 <td>{el.name}</td>
                 <td>{el.email}</td>

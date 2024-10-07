@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { signup, authorize } from "../utils/auth";
+import { signup } from "../utils/auth";
 
 function Signup({ handleLogin }) {
   const [name, setName] = useState("");
@@ -8,29 +8,30 @@ function Signup({ handleLogin }) {
   const [phone, setPhone] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const formRef = useRef();
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (password !== passwordConfirmation) {
-      console.log("ERROR: Password is different");
+      setErrorMessage("Password is not the same!");
       return;
     }
     signup(name, email, phone, password)
       .then(() => {
-        authorize(email, password);
         handleLogin(email);
         navigate("/");
       })
       .catch((error) => {
-        console.error("signup error:", error);
+        setErrorMessage(error.message);
       });
   };
 
   return (
     <div className="signup">
       <h2 className="signup__welcome">Creater your account!</h2>
+      {errorMessage && <span className="login__error">{errorMessage}</span>}
       <form onSubmit={handleSubmit} className="signup__form" ref={formRef}>
         <input
           type="name"

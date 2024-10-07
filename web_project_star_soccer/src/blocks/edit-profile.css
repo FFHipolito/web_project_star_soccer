@@ -8,10 +8,22 @@
 }
 
 .edit__profile_welcome {
-  margin: 50px 0;
+  margin: 10px 0;
   font-size: 24px;
   font-weight: 900;
   color: #00112c;
+}
+
+.edit__profile_error {
+  color: red;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.edit__profile_success {
+  color: #0abf53;
+  margin-bottom: 10px;
+  font-size: 14px;
 }
 
 .edit__profile_form {
@@ -70,7 +82,7 @@
 }
 
 .edit__profile_cancel {
-  margin: 7px auto 80px;
+  margin: 7px auto;
   color: #00112c;
   font-size: 14px;
   font-weight: 400;

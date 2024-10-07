@@ -1,33 +1,53 @@
+import { useContext } from "react";
 import { Link } from "react-router-dom";
-import { userMock, matchMock } from "../mock-data";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-function Main() {
-  // TODO remove hardcode below after be integration
-  const hasNextMatch = true;
+function Main({ match, handleSubscription }) {
+  const user = useContext(CurrentUserContext);
+  const hasMatch = Object.keys(match).length > 0;
 
-  const title = hasNextMatch ? "Next Match" : "There is no match created yet.";
+  const subscribeToMatch = (e) => {
+    e.preventDefault();
+    handleSubscription();
+  };
+
+  const title = hasMatch ? "Next Match" : "There is no match created yet.";
   return (
     <div className="main">
       <h2 className="main__title">{title}</h2>
-      {!hasNextMatch && userMock.isAdmin && (
+      {!hasMatch && user.isAdmin && (
         <Link to="/create-match">
           <button type="button" className="main__button">
             Create a new match
           </button>
         </Link>
       )}
-      {hasNextMatch && (
+      {hasMatch && (
         <>
           <div className="main__card">
             <div className="main__card_container">
-              <p className="main__card_date">{matchMock.date}</p>
-              <span className="main__card_time">time: {matchMock.time}</span>
+              <p className="main__card_date">{match.date}</p>
+              <span className="main__card_time">time: {match.time}h</span>
             </div>
           </div>
-          <button type="button" className="main__button">
-            I gonna play!
-          </button>
-          {userMock.isAdmin && (
+          {user.isPlaying ? (
+            <button
+              type="button"
+              className="main__button"
+              onClick={subscribeToMatch}
+            >
+              Unsubscribe
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="main__button"
+              onClick={subscribeToMatch}
+            >
+              I gonna play!
+            </button>
+          )}
+          {user.isAdmin && (
             <Link to="/players">
               <button type="button" className="main__button">
                 See players

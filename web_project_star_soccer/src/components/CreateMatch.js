@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getDateFormatted } from "../utils/format-date";
+import { getDateFormatted, formatDateToDisplay } from "../utils/format-date";
 
 function CreateMatch({ handleCreateMatch }) {
   const [date, setDate] = useState("");
@@ -12,10 +12,9 @@ function CreateMatch({ handleCreateMatch }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleCreateMatch({
-      date,
-      time,
-    });
+    const dateFormatted = formatDateToDisplay(date);
+    setDate(dateFormatted);
+    handleCreateMatch({ date: dateFormatted, time });
     navigate("/");
   };
 

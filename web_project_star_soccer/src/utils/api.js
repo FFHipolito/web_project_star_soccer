@@ -17,7 +17,7 @@ class Api {
     }
 
     return fetch(`${this.baseUrl}${endpoint}`, options).then((res) => {
-      if (!res.ok) Promise.reject(`Error ${res.status}`);
+      if (!res.ok) Promise.reject(Error`${res.status}`);
       return res.json();
     });
   }
@@ -37,10 +37,8 @@ class Api {
     const response = await new Promise((resolve) => {
       resolve({
         data: {
-          ...userMock,
-          name: userData.name,
-          email: userData.email,
-          phone: userData.phone,
+          ...userData,
+          isAdmin: userData.email === "useradmin@email.com",
         },
       });
     });
@@ -76,15 +74,17 @@ class Api {
     return response;
   }
 
-  async subscribeMatch(matchId, userId) {
+  async subscribeMatch(matchId, userId, isSubscribed) {
     const response = await new Promise((resolve) => {
       resolve({
-        ...userMock,
-        isPlaying: true,
+        data: {
+          ...userMock,
+          isSubscribed,
+        },
       });
     });
     // TODO modify after backend implementation
-    // return this._makeRequest(`/match/${matchId}`, "POST", userId);
+    // return this._makeRequest(/match/${matchId}, "POST", userId);
     return response;
   }
 }

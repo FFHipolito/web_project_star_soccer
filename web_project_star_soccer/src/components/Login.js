@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { authorize } from "../utils/auth";
 
@@ -8,6 +8,13 @@ function Login({ handleLogin }) {
   const [errorMessage, setErrorMessage] = useState("");
   const formRef = useRef();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      navigate("/");
+    }
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();

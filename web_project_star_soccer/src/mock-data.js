@@ -15,8 +15,8 @@ const generatePlayerList = () => {
 
 export const userMock = {
   id: "99",
-  name: "Fernando",
-  email: "email@email.com",
+  name: "Test User Admin",
+  email: "useradmin@email.com",
   phone: "(99) 99999-9999",
   isAdmin: true,
   isPlaying: false,

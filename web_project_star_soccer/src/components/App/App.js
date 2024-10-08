@@ -11,17 +11,18 @@ import CreateMatch from "../CreateMatch";
 import PlayerList from "../PlayerList";
 import api from "../../utils/api";
 
+const USER_INIT = {
+  name: "",
+  email: "",
+  phone: "",
+  isAdmin: false,
+  isPlaying: false,
+};
+
 function App() {
   const loggedInInitialValue = localStorage.getItem("loggedIn") ? true : false;
-  const userInitialValues = {
-    id: "",
-    name: "",
-    email: "",
-    phone: "",
-    isAdmin: false,
-  };
   const [loggedIn, setLoggedIn] = useState(loggedInInitialValue);
-  const [user, setUser] = useState(userInitialValues);
+  const [user, setUser] = useState(USER_INIT);
   const [match, setMatch] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -50,21 +51,6 @@ function App() {
     });
   };
 
-  const handleLogin = () => {
-    getCurrentUser();
-    getCurrentMatch();
-    setLoggedIn(true);
-    localStorage.setItem("loggedIn", "true");
-  };
-
-  const handleLogout = () => {
-    setLoggedIn(false);
-    setUser(userInitialValues);
-    setMatch({});
-    localStorage.removeItem("loggedIn");
-    localStorage.removeItem("jwt");
-  };
-
   const handleUpdateUser = (userData) => {
     api
       .updateUserInfo(userData)
@@ -76,9 +62,9 @@ function App() {
       });
   };
 
-  const handleMatchSubscription = () => {
+  const handleMatchSubscription = (isSubscribed) => {
     api
-      .subscribeMatch(match.id, user.id)
+      .subscribeMatch(match.id, user.id, isSubscribed)
       .then((response) => {
         setUser(response.data);
       })
@@ -98,6 +84,26 @@ function App() {
       });
   };
 
+  const handleLogin = () => {
+    getCurrentUser();
+    getCurrentMatch();
+    setLoggedIn(true);
+  };
+
+  const handleSignup = (user) => {
+    setUser(user);
+    getCurrentMatch();
+    setLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    setUser(USER_INIT);
+    setLoggedIn(false);
+    setMatch({});
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("jwt");
+  };
+
   return (
     <BrowserRouter>
       <div className="page">
@@ -111,7 +117,7 @@ function App() {
             <Route path="*" element={<Login handleLogin={handleLogin} />} />
             <Route
               path="/signup"
-              element={<Signup handleLogin={handleLogin} />}
+              element={<Signup handleSignup={handleSignup} />}
             />
             <Route
               path="/"

@@ -1,15 +1,18 @@
-import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 function Main({ match, handleSubscription }) {
   const user = useContext(CurrentUserContext);
   const hasMatch = Object.keys(match).length > 0;
+  const navigate = useNavigate();
 
-  const subscribeToMatch = (e) => {
-    e.preventDefault();
-    handleSubscription();
-  };
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+      navigate("/login");
+    }
+  }, []);
 
   const title = hasMatch ? "Next Match" : "There is no match created yet.";
   return (
@@ -27,26 +30,16 @@ function Main({ match, handleSubscription }) {
           <div className="main__card">
             <div className="main__card_container">
               <p className="main__card_date">{match.date}</p>
-              <span className="main__card_time">time: {match.time}h</span>
+              <span className="main__card_time">Time: {match.time}h</span>
             </div>
           </div>
-          {user.isPlaying ? (
-            <button
-              type="button"
-              className="main__button"
-              onClick={subscribeToMatch}
-            >
-              Unsubscribe
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="main__button"
-              onClick={subscribeToMatch}
-            >
-              I gonna play!
-            </button>
-          )}
+          <button
+            type="button"
+            className="main__button"
+            onClick={() => handleSubscription(!user.isSubscribed)}
+          >
+            {user.isSubscribed ? "Unsubscribe" : "I gonna play!"}
+          </button>
           {user.isAdmin && (
             <Link to="/players">
               <button type="button" className="main__button">

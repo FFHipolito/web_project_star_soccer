@@ -1,30 +1,44 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signup } from "../utils/auth";
 
-function Signup({ handleLogin }) {
+function Signup({ handleSignup }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const formRef = useRef();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      navigate("/");
+    }
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (password !== passwordConfirmation) {
       setErrorMessage("Password is not the same!");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 2000);
       return;
     }
-    signup(name, email, phone, password)
-      .then(() => {
-        handleLogin(email);
+
+    signup({ name, email, phone, password, passwordConfirmation })
+      .then((response) => {
+        handleSignup(response.data.user);
         navigate("/");
       })
       .catch((error) => {
         setErrorMessage(error.message);
+        setTimeout(() => {
+          setErrorMessage("");
+        }, 2000);
       });
   };
 

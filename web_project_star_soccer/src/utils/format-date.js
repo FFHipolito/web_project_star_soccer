@@ -5,3 +5,11 @@ export const getDateFormatted = () => {
   const dd = String(date.getDate()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd}`;
 };
+
+export const formatDateToDisplay = (date) => {
+  const dateSplitted = date.split("-");
+  const yyyy = dateSplitted[0];
+  const mm = dateSplitted[1];
+  const dd = dateSplitted[2];
+  return `${dd}/${mm}/${yyyy}`;
+};

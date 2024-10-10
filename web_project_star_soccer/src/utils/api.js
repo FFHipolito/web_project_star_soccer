@@ -87,6 +87,25 @@ class Api {
     // return this._makeRequest(/match/${matchId}, "POST", userId);
     return response;
   }
+
+  async deleteMatch(matchId) {
+    // TODO modify after backend implementation
+    // include fetch in a try-catch block
+    const response = await new Promise((resolve, reject) => {
+      let success = true;
+
+      if (success) {
+        resolve({
+          success: true,
+          message: "Match closed!",
+        });
+      } else {
+        reject("Ops, something went wrong!");
+      }
+    });
+    // return this._makeRequest(/match/${matchId}, "DELETE");
+    return response;
+  }
 }
 
 const api = new Api("http://localhost:3001", {

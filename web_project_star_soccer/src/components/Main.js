@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-function Main({ match, handleSubscription }) {
+function Main({ match, handleSubscription, hadleCloseMatch }) {
   const user = useContext(CurrentUserContext);
   const hasMatch = Object.keys(match).length > 0;
   const navigate = useNavigate();
@@ -28,24 +28,38 @@ function Main({ match, handleSubscription }) {
       {hasMatch && (
         <>
           <div className="main__card">
+            {user.isSubscribed && (
+              <span className="main__card_subscribed">
+                {"You are subscribed!"}
+              </span>
+            )}
             <div className="main__card_container">
               <p className="main__card_date">{match.date}</p>
-              <span className="main__card_time">Time: {match.time}h</span>
+              <span className="main__card_time">🕗 {match.time}h</span>
             </div>
           </div>
           <button
             type="button"
             className="main__button"
-            onClick={() => handleSubscription(!user.isSubscribed)}
+            onClick={handleSubscription}
           >
             {user.isSubscribed ? "Unsubscribe" : "I gonna play!"}
           </button>
           {user.isAdmin && (
-            <Link to="/players">
-              <button type="button" className="main__button">
-                See players
+            <>
+              <button
+                type="button"
+                className="main__button"
+                onClick={hadleCloseMatch}
+              >
+                Close match
               </button>
-            </Link>
+              <Link to="/players">
+                <button type="button" className="main__button">
+                  See players
+                </button>
+              </Link>
+            </>
           )}
         </>
       )}

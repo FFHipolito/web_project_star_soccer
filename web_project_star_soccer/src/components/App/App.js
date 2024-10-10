@@ -62,11 +62,12 @@ function App() {
       });
   };
 
-  const handleMatchSubscription = (isSubscribed) => {
+  const handleMatchSubscription = () => {
     api
-      .subscribeMatch(match.id, user.id, isSubscribed)
+      .subscribeMatch(match, user)
       .then((response) => {
-        setUser(response.data);
+        setUser(response.data.user);
+        setMatch(response.data.match);
       })
       .catch((error) => {
         console.log(error.message);

@@ -23,8 +23,8 @@ export const userMock = {
 };
 
 export const matchMock = {
-  // id: "1",
-  // date: "20/09/2024",
-  // time: "11:00h",
-  // players: generatePlayerList(),
+  id: "1",
+  date: "20/09/2024",
+  time: "11:00h",
+  players: generatePlayerList(),
 };

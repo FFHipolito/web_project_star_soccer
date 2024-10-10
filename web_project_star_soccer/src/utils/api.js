@@ -74,12 +74,29 @@ class Api {
     return response;
   }
 
-  async subscribeMatch(matchId, userId, isSubscribed) {
+  async subscribeMatch(match, user) {
+    // TODO modify after backend implementation
+    // include fetch in a try-catch block
+
+    let playersUpdated = [];
+    // if user is already subscribed remove him, if not add him to the match
+    user.isSubscribed
+      ? (playersUpdated = match.players.filter(
+          (player) => player.id !== user.id
+        ))
+      : (playersUpdated = [...match.players, user]);
+
     const response = await new Promise((resolve) => {
       resolve({
         data: {
-          ...userMock,
-          isSubscribed,
+          user: {
+            ...user,
+            isSubscribed: !user.isSubscribed,
+          },
+          match: {
+            ...match,
+            players: playersUpdated,
+          },
         },
       });
     });

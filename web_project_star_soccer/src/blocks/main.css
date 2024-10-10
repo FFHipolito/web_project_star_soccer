@@ -13,6 +13,7 @@
 }
 
 .main__card {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,6 +22,16 @@
   border: 2px solid #00112c;
   background-image: url("../images/main-image.png");
   background-size: cover;
+}
+
+.main__card_subscribed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 3px 10px;
+  background-color: #00112c;
+  color: #fff;
+  font-size: 10px;
 }
 
 .main__card_container {

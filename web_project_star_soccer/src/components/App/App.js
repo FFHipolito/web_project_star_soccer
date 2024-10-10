@@ -84,6 +84,17 @@ function App() {
       });
   };
 
+  const hadleCloseMatch = () => {
+    api
+      .deleteMatch(match.id)
+      .then((response) => {
+        setMatch({});
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const handleLogin = () => {
     getCurrentUser();
     getCurrentMatch();
@@ -125,6 +136,7 @@ function App() {
                 <Main
                   match={match}
                   handleSubscription={handleMatchSubscription}
+                  hadleCloseMatch={hadleCloseMatch}
                 />
               }
             />

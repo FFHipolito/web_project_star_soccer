@@ -2,10 +2,19 @@ import { userMock } from "../mock-data";
 
 const BASE_URL = "http://localhost:3001";
 
+// generate true or false value for api calls randomly,
+// remove after backend implementation
+const INVALID_DATA = "Invalid e-mail or password!";
+const EMAIL_REGISTERED = "This is email is already registered!";
+const ERROR_MESSAGE = "Ops, something went wrong!";
+const successApiCallRandomly = () => {
+  return Math.random() < 0.7;
+};
+
 export const authorize = async (email, password) => {
   try {
     const response = await new Promise((resolve, reject) => {
-      setTimeout(() => {
+      if (successApiCallRandomly()) {
         if (email === userMock.email && password === "123456") {
           resolve({
             success: true,
@@ -15,9 +24,13 @@ export const authorize = async (email, password) => {
             },
           });
         } else {
-          reject(new Error("Invalid e-mail or password!"));
+          const error = new Error(INVALID_DATA);
+          error.name = "ValidationError";
+          reject(error);
         }
-      }, 1000);
+      } else {
+        reject(new Error(ERROR_MESSAGE));
+      }
     });
 
     const { token } = response.data;
@@ -32,31 +45,38 @@ export const authorize = async (email, password) => {
 export const signup = async (userData) => {
   try {
     const response = await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve({
-          success: true,
-          message: "User signup successfully!",
-          data: {
-            token: "testjsonwebtoken",
-            user: {
-              id: "88",
-              name: userData.name,
-              email: userData.email,
-              phone: userData.phone,
-              isAdmin: false,
-              isSubscribed: false,
+      if (successApiCallRandomly()) {
+        if (userData.email !== userMock.email) {
+          resolve({
+            success: true,
+            message: "User signup successfully!",
+            data: {
+              token: "testjsonwebtoken",
+              user: {
+                id: "88",
+                name: userData.name,
+                email: userData.email,
+                phone: userData.phone,
+                isAdmin: false,
+                isSubscribed: false,
+              },
             },
-          },
-        });
-      }, 1000);
+          });
+        } else {
+          const error = new Error(EMAIL_REGISTERED);
+          error.name = "ValidationError";
+          reject(error);
+        }
+      } else {
+        reject(new Error(ERROR_MESSAGE));
+      }
     });
-
     localStorage.setItem("jwt", response.data.token);
     localStorage.setItem("loggedIn", "true");
 
     return response;
   } catch (error) {
-    console.error("Authorization error:", error);
+    console.error(error);
     throw error;
   }
 };

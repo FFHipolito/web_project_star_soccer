@@ -6,13 +6,13 @@ function Main({ match, handleSubscription, hadleCloseMatch }) {
   const user = useContext(CurrentUserContext);
   const hasMatch = Object.keys(match).length > 0;
   const navigate = useNavigate();
+  const token = localStorage.getItem("jwt");
 
   useEffect(() => {
-    const token = localStorage.getItem("jwt");
     if (!token) {
       navigate("/login");
     }
-  }, []);
+  }, [token]);
 
   const title = hasMatch ? "Next Match" : "There is no match created yet.";
   return (

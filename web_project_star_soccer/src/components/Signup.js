@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signup } from "../utils/auth";
+import { ErrorMessageContext } from "../contexts/ErrorMessageContext";
 
 function Signup({ handleSignup }) {
   const [name, setName] = useState("");
@@ -9,15 +10,16 @@ function Signup({ handleSignup }) {
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const { handleAlertMessage } = useContext(ErrorMessageContext);
   const formRef = useRef();
   const navigate = useNavigate();
+  const token = localStorage.getItem("jwt");
 
   useEffect(() => {
-    const token = localStorage.getItem("jwt");
     if (token) {
       navigate("/");
     }
-  }, []);
+  }, [token]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -35,10 +37,15 @@ function Signup({ handleSignup }) {
         navigate("/");
       })
       .catch((error) => {
-        setErrorMessage(error.message);
-        setTimeout(() => {
-          setErrorMessage("");
-        }, 2000);
+        const { name, message } = error;
+        if (name === "ValidationError") {
+          setErrorMessage(message);
+          setTimeout(() => {
+            setErrorMessage("");
+          }, 2000);
+        } else {
+          handleAlertMessage({ type: "error", message });
+        }
       });
   };
 

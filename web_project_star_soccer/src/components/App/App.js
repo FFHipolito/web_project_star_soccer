@@ -1,11 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
+import { ErrorMessageContext } from "../../contexts/ErrorMessageContext";
 import Header from "../Header";
 import Login from "../Login";
 import Signup from "../Signup";
 import Footer from "../Footer";
 import Main from "../Main";
+import AlertMessage from "../AlertMessage";
 import EditProfile from "../EditProfile";
 import CreateMatch from "../CreateMatch";
 import PlayerList from "../PlayerList";
@@ -24,7 +26,7 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(loggedInInitialValue);
   const [user, setUser] = useState(USER_INIT);
   const [match, setMatch] = useState({});
-  const [errorMessage, setErrorMessage] = useState("");
+  const [alertMessage, setAlertMessage] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
@@ -42,13 +44,24 @@ function App() {
       .then((response) => {
         setUser(response.data);
       })
-      .catch((error) => setErrorMessage(error.message));
+      .catch((error) => {
+        handleLogout();
+        const { message } = error;
+        handleAlertMessage({ type: "error", message });
+      });
   };
 
   const getCurrentMatch = () => {
-    api.getMatch().then((response) => {
-      setMatch(response.data);
-    });
+    api
+      .getMatch()
+      .then((response) => {
+        setMatch(response.data);
+      })
+      .catch((error) => {
+        handleLogout();
+        const { message } = error;
+        handleAlertMessage({ type: "error", message });
+      });
   };
 
   const handleUpdateUser = (userData) => {
@@ -56,9 +69,12 @@ function App() {
       .updateUserInfo(userData)
       .then((response) => {
         setUser(response.data);
+        const { message } = response;
+        handleAlertMessage({ type: "success", message });
       })
       .catch((error) => {
-        console.log(error.message);
+        const { message } = error;
+        handleAlertMessage({ type: "error", message });
       });
   };
 
@@ -68,9 +84,12 @@ function App() {
       .then((response) => {
         setUser(response.data.user);
         setMatch(response.data.match);
+        const { message } = response;
+        handleAlertMessage({ type: "success", message });
       })
       .catch((error) => {
-        console.log(error.message);
+        const { message } = error;
+        handleAlertMessage({ type: "error", message });
       });
   };
 
@@ -79,9 +98,12 @@ function App() {
       .createMatch(matchData)
       .then((response) => {
         setMatch(response.data);
+        const { message } = response;
+        handleAlertMessage({ type: "success", message });
       })
       .catch((error) => {
-        console.log(error.message);
+        const { message } = error;
+        handleAlertMessage({ type: "error", message });
       });
   };
 
@@ -90,9 +112,12 @@ function App() {
       .deleteMatch(match.id)
       .then((response) => {
         setMatch({});
+        const { message } = response;
+        handleAlertMessage({ type: "success", message });
       })
       .catch((error) => {
-        console.log(error);
+        const { message } = error;
+        handleAlertMessage({ type: "error", message });
       });
   };
 
@@ -116,46 +141,58 @@ function App() {
     localStorage.removeItem("jwt");
   };
 
+  const handleAlertMessage = ({ type, message }) => {
+    setAlertMessage({ type, message });
+    setTimeout(() => {
+      setAlertMessage(null);
+    }, 3000);
+  };
+
   return (
     <BrowserRouter>
       <div className="page">
-        <CurrentUserContext.Provider value={user}>
-          <Header loggedIn={loggedIn} handleLogout={handleLogout} />
-          <Routes>
-            <Route
-              path="/login"
-              element={<Login handleLogin={handleLogin} />}
-            />
-            <Route path="*" element={<Login handleLogin={handleLogin} />} />
-            <Route
-              path="/signup"
-              element={<Signup handleSignup={handleSignup} />}
-            />
-            <Route
-              path="/"
-              element={
-                <Main
-                  match={match}
-                  handleSubscription={handleMatchSubscription}
-                  hadleCloseMatch={hadleCloseMatch}
-                />
-              }
-            />
-            <Route
-              path="/edit-profile"
-              element={<EditProfile handleUpdateUser={handleUpdateUser} />}
-            />
-            <Route
-              path="/create-match"
-              element={<CreateMatch handleCreateMatch={handleCreateMatch} />}
-            />
-            <Route
-              path="/players"
-              element={<PlayerList players={match.players} />}
-            />
-          </Routes>
-          <Footer />
-        </CurrentUserContext.Provider>
+        {alertMessage && <AlertMessage alertMessage={alertMessage} />}
+        <ErrorMessageContext.Provider
+          value={{ alertMessage, handleAlertMessage }}
+        >
+          <CurrentUserContext.Provider value={user}>
+            <Header loggedIn={loggedIn} handleLogout={handleLogout} />
+            <Routes>
+              <Route
+                path="/login"
+                element={<Login handleLogin={handleLogin} />}
+              />
+              <Route path="*" element={<Login handleLogin={handleLogin} />} />
+              <Route
+                path="/signup"
+                element={<Signup handleSignup={handleSignup} />}
+              />
+              <Route
+                path="/"
+                element={
+                  <Main
+                    match={match}
+                    handleSubscription={handleMatchSubscription}
+                    hadleCloseMatch={hadleCloseMatch}
+                  />
+                }
+              />
+              <Route
+                path="/edit-profile"
+                element={<EditProfile handleUpdateUser={handleUpdateUser} />}
+              />
+              <Route
+                path="/create-match"
+                element={<CreateMatch handleCreateMatch={handleCreateMatch} />}
+              />
+              <Route
+                path="/players"
+                element={<PlayerList players={match.players} />}
+              />
+            </Routes>
+            <Footer />
+          </CurrentUserContext.Provider>
+        </ErrorMessageContext.Provider>
       </div>
     </BrowserRouter>
   );

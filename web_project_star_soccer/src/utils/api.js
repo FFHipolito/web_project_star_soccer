@@ -4,7 +4,7 @@ import { userMock, matchMock } from "../mock-data";
 // remove after backend implementation
 const ERROR_MESSAGE = "Ops, something went wrong!";
 const successApiCallRandomly = () => {
-  return Math.random() < 0.9;
+  return Math.random() < 0.7;
 };
 
 class Api {
@@ -32,7 +32,7 @@ class Api {
   async getUserInfo() {
     try {
       const response = await new Promise((resolve, reject) => {
-        if (successApiCallRandomly()) {
+        if (Math.random() < 0.95) {
           resolve({
             data: { ...userMock },
           });
@@ -77,7 +77,7 @@ class Api {
   async getMatch() {
     try {
       const response = await new Promise((resolve, reject) => {
-        if (successApiCallRandomly()) {
+        if (Math.random() < 0.95) {
           resolve({
             data: { ...matchMock },
           });

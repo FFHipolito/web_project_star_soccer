@@ -1,5 +1,12 @@
 import { userMock, matchMock } from "../mock-data";
 
+// generate true or false value for api calls randomly,
+// remove after backend implementation
+const ERROR_MESSAGE = "Ops, something went wrong!";
+const successApiCallRandomly = () => {
+  return Math.random() < 0.7;
+};
+
 class Api {
   constructor(baseUrl, options) {
     this.baseUrl = baseUrl;
@@ -23,105 +30,159 @@ class Api {
   }
 
   async getUserInfo() {
-    const response = await new Promise((resolve) => {
-      resolve({
-        data: { ...userMock },
+    try {
+      const response = await new Promise((resolve, reject) => {
+        if (successApiCallRandomly()) {
+          resolve({
+            data: { ...userMock },
+          });
+        } else {
+          reject(new Error(ERROR_MESSAGE));
+        }
       });
-    });
-    // TODO modify after backend implementation
-    // return this._makeRequest("/user/me");
-    return response;
+
+      // return this._makeRequest("/user/me");
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   async updateUserInfo(userData) {
-    const response = await new Promise((resolve) => {
-      resolve({
-        data: {
-          ...userData,
-          isAdmin: userData.email === "useradmin@email.com",
-        },
+    try {
+      const response = await new Promise((resolve, reject) => {
+        if (successApiCallRandomly()) {
+          resolve({
+            ok: true,
+            message: "Profile updated!",
+            data: {
+              ...userData,
+              isAdmin: userData.email === "useradmin@email.com",
+            },
+          });
+        } else {
+          reject(new Error(ERROR_MESSAGE));
+        }
       });
-    });
-    // TODO modify after backend implementation
-    // return this._makeRequest("/user/me", "PATCH", { userData });
-    return response;
+
+      // return this._makeRequest("/user/me", "PATCH", { userData });
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   async getMatch() {
-    const response = await new Promise((resolve) => {
-      resolve({
-        data: { ...matchMock },
+    try {
+      const response = await new Promise((resolve, reject) => {
+        if (successApiCallRandomly()) {
+          resolve({
+            data: { ...matchMock },
+          });
+        } else {
+          reject(new Error(ERROR_MESSAGE));
+        }
       });
-    });
-    // TODO modify after backend implementation
-    // return this._makeRequest("/match");
-    return response;
+
+      // return this._makeRequest("/match");
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   async createMatch(matchData) {
-    const response = await new Promise((resolve) => {
-      resolve({
-        data: {
-          id: "1",
-          date: matchData.date,
-          time: matchData.time,
-          players: [],
-        },
+    try {
+      const response = await new Promise((resolve, reject) => {
+        if (successApiCallRandomly()) {
+          resolve({
+            ok: true,
+            message: "Match created!",
+            data: {
+              id: "1",
+              date: matchData.date,
+              time: matchData.time,
+              players: [],
+            },
+          });
+        } else {
+          reject(new Error(ERROR_MESSAGE));
+        }
       });
-    });
-    // TODO modify after backend implementation
-    // return this._makeRequest("/match", "POST", { matchData });
-    return response;
+
+      // return this._makeRequest("/match", "POST", { matchData });
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   async subscribeMatch(match, user) {
-    // TODO modify after backend implementation
-    // include fetch in a try-catch block
+    try {
+      let playersUpdated = [];
+      // if user is already subscribed remove him, if not add him to the match
+      user.isSubscribed
+        ? (playersUpdated = match.players.filter(
+            (player) => player.id !== user.id
+          ))
+        : (playersUpdated = [...match.players, user]);
 
-    let playersUpdated = [];
-    // if user is already subscribed remove him, if not add him to the match
-    user.isSubscribed
-      ? (playersUpdated = match.players.filter(
-          (player) => player.id !== user.id
-        ))
-      : (playersUpdated = [...match.players, user]);
+      const response = await new Promise((resolve, reject) => {
+        const successMessage = `You ${
+          user.isSubscribed ? "unsubscribed" : "subscribed"
+        } for the match!`;
 
-    const response = await new Promise((resolve) => {
-      resolve({
-        data: {
-          user: {
-            ...user,
-            isSubscribed: !user.isSubscribed,
-          },
-          match: {
-            ...match,
-            players: playersUpdated,
-          },
-        },
+        if (successApiCallRandomly()) {
+          resolve({
+            ok: true,
+            message: successMessage,
+            data: {
+              user: {
+                ...user,
+                isSubscribed: !user.isSubscribed,
+              },
+              match: {
+                ...match,
+                players: playersUpdated,
+              },
+            },
+          });
+        } else {
+          reject(new Error(ERROR_MESSAGE));
+        }
       });
-    });
-    // TODO modify after backend implementation
-    // return this._makeRequest(/match/${matchId}, "POST", userId);
-    return response;
+
+      // return this._makeRequest(/match/${matchId}, "POST", userId);
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   async deleteMatch(matchId) {
-    // TODO modify after backend implementation
-    // include fetch in a try-catch block
-    const response = await new Promise((resolve, reject) => {
-      let success = true;
+    try {
+      const response = await new Promise((resolve, reject) => {
+        if (successApiCallRandomly()) {
+          resolve({
+            ok: true,
+            message: "Match closed!",
+          });
+        } else {
+          reject(new Error(ERROR_MESSAGE));
+        }
+      });
 
-      if (success) {
-        resolve({
-          success: true,
-          message: "Match closed!",
-        });
-      } else {
-        reject("Ops, something went wrong!");
-      }
-    });
-    // return this._makeRequest(/match/${matchId}, "DELETE");
-    return response;
+      // return this._makeRequest(/match/${matchId}, "DELETE");
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 }
 

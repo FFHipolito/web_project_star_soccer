@@ -1,11 +1,14 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { authorize } from "../utils/auth";
+import { ErrorMessageContext } from "../contexts/ErrorMessageContext";
 
 function Login({ handleLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const { handleAlertMessage } = useContext(ErrorMessageContext);
+
   const formRef = useRef();
   const navigate = useNavigate();
 
@@ -24,14 +27,22 @@ function Login({ handleLogin }) {
         navigate("/");
       })
       .catch((error) => {
-        setErrorMessage(error.message);
+        const { name, message } = error;
+        if (name === "ValidationError") {
+          setErrorMessage(message);
+          setTimeout(() => {
+            setErrorMessage("");
+          }, 2000);
+        } else {
+          handleAlertMessage({ type: "error", message });
+        }
       });
   };
 
   return (
     <div className="login">
       <h2 className="login__welcome">Welcome back!</h2>
-      {errorMessage && <span className="signup__error">{errorMessage}</span>}
+      {errorMessage && <span className="login__error">{errorMessage}</span>}
       <form onSubmit={handleSubmit} className="login__form" ref={formRef}>
         <input
           type="email"

@@ -5,7 +5,7 @@ import { getDateFormatted, formatDateToDisplay } from "../utils/format-date";
 function CreateMatch({ handleCreateMatch }) {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [dateMin, setDateMin] = useState(getDateFormatted());
+  const dateMin = getDateFormatted();
 
   const formRef = useRef();
   const navigate = useNavigate();

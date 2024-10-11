@@ -12,7 +12,7 @@ function Main({ match, handleSubscription, hadleCloseMatch }) {
     if (!token) {
       navigate("/login");
     }
-  }, [token]);
+  }, [token, navigate]);
 
   const title = hasMatch ? "Next Match" : "There is no match created yet.";
   return (
@@ -35,7 +35,7 @@ function Main({ match, handleSubscription, hadleCloseMatch }) {
             )}
             <div className="main__card_container">
               <p className="main__card_date">{match.date}</p>
-              <span className="main__card_time">🕗 {match.time}h</span>
+              <span className="main__card_time">🕗 {match.time}</span>
             </div>
           </div>
           <button

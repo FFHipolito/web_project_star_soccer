@@ -4,7 +4,7 @@ import { userMock, matchMock } from "../mock-data";
 // remove after backend implementation
 const ERROR_MESSAGE = "Ops, something went wrong!";
 const successApiCallRandomly = () => {
-  return Math.random() < 0.7;
+  return Math.random() < 0.8;
 };
 
 class Api {

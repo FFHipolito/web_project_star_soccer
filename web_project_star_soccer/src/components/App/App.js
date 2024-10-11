@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import { ErrorMessageContext } from "../../contexts/ErrorMessageContext";
+import ProtectedRoute from "../ProtectedRoute";
 import Header from "../Header";
 import Login from "../Login";
 import Signup from "../Signup";
@@ -28,17 +29,7 @@ function App() {
   const [match, setMatch] = useState({});
   const [alertMessage, setAlertMessage] = useState(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem("jwt");
-    if (token) {
-      getCurrentUser();
-      getCurrentMatch();
-    } else {
-      handleLogout();
-    }
-  }, []);
-
-  const getCurrentUser = () => {
+  const getCurrentUser = useCallback(() => {
     api
       .getUserInfo()
       .then((response) => {
@@ -49,9 +40,9 @@ function App() {
         const { message } = error;
         handleAlertMessage({ type: "error", message });
       });
-  };
+  }, []);
 
-  const getCurrentMatch = () => {
+  const getCurrentMatch = useCallback(() => {
     api
       .getMatch()
       .then((response) => {
@@ -62,7 +53,7 @@ function App() {
         const { message } = error;
         handleAlertMessage({ type: "error", message });
       });
-  };
+  }, []);
 
   const handleUpdateUser = (userData) => {
     api
@@ -148,6 +139,16 @@ function App() {
     }, 3000);
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      getCurrentUser();
+      getCurrentMatch();
+    } else {
+      handleLogout();
+    }
+  }, [getCurrentUser, getCurrentMatch]);
+
   return (
     <BrowserRouter>
       <div className="page">
@@ -162,7 +163,6 @@ function App() {
                 path="/login"
                 element={<Login handleLogin={handleLogin} />}
               />
-              <Route path="*" element={<Login handleLogin={handleLogin} />} />
               <Route
                 path="/signup"
                 element={<Signup handleSignup={handleSignup} />}
@@ -170,25 +170,31 @@ function App() {
               <Route
                 path="/"
                 element={
-                  <Main
-                    match={match}
-                    handleSubscription={handleMatchSubscription}
-                    hadleCloseMatch={hadleCloseMatch}
-                  />
+                  <ProtectedRoute loggedIn={loggedIn}>
+                    <Main
+                      match={match}
+                      handleSubscription={handleMatchSubscription}
+                      hadleCloseMatch={hadleCloseMatch}
+                    />
+                  </ProtectedRoute>
                 }
-              />
-              <Route
-                path="/edit-profile"
-                element={<EditProfile handleUpdateUser={handleUpdateUser} />}
-              />
-              <Route
-                path="/create-match"
-                element={<CreateMatch handleCreateMatch={handleCreateMatch} />}
-              />
-              <Route
-                path="/players"
-                element={<PlayerList players={match.players} />}
-              />
+              >
+                <Route
+                  path="/create-match"
+                  element={
+                    <CreateMatch handleCreateMatch={handleCreateMatch} />
+                  }
+                />
+                <Route
+                  path="/players"
+                  element={<PlayerList players={match.players} />}
+                />
+                <Route
+                  path="/edit-profile"
+                  element={<EditProfile handleUpdateUser={handleUpdateUser} />}
+                />
+              </Route>
+              <Route path="*" element={<Login handleLogin={handleLogin} />} />
             </Routes>
             <Footer />
           </CurrentUserContext.Provider>

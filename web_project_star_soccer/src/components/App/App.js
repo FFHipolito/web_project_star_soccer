@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import { ErrorMessageContext } from "../../contexts/ErrorMessageContext";
+import { checkToken } from "../../utils/auth";
 import ProtectedRoute from "../ProtectedRoute";
 import Header from "../Header";
 import Login from "../Login";
@@ -142,6 +143,16 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem("jwt");
     if (token) {
+      checkToken(token)
+        .then(() => {
+          setLoggedIn(true);
+        })
+        .catch((error) => {
+          const { message } = error;
+          handleAlertMessage({ type: "error", message });
+          handleLogout();
+        });
+
       getCurrentUser();
       getCurrentMatch();
     } else {

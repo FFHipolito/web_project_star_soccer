@@ -1,6 +1,6 @@
 import { userMock } from "../mock-data";
 
-const BASE_URL = "http://localhost:3001";
+// const BASE_URL = "http://localhost:3001";
 
 // generate true or false value for api calls randomly,
 // remove after backend implementation
@@ -77,6 +77,26 @@ export const signup = async (userData) => {
     return response;
   } catch (error) {
     console.error(error);
+    throw error;
+  }
+};
+
+export const checkToken = async (token) => {
+  try {
+    await new Promise((resolve, reject) => {
+      if (successApiCallRandomly()) {
+        resolve({
+          success: true,
+          message: "Token valid!",
+        });
+      } else {
+        reject(new Error(ERROR_MESSAGE));
+      }
+    });
+
+    localStorage.setItem("loggedIn", "true");
+  } catch (error) {
+    console.error("Authorization error:", error);
     throw error;
   }
 };

@@ -1,12 +1,19 @@
-import React from "react";
 import { Navigate } from "react-router-dom";
+import { useContext } from "react";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-const ProtectedRoute = ({ loggedIn, children }) => {
+function ProtectedRoute({ children, loggedIn, requireAdmin }) {
+  const user = useContext(CurrentUserContext);
+
   if (!loggedIn) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
+  }
+
+  if (requireAdmin && !user.isAdmin) {
+    return <Navigate to="/" replace />;
   }
 
   return children;
-};
+}
 
 export default ProtectedRoute;

@@ -27,7 +27,7 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(loggedInInitialValue);
   const [user, setUser] = useState(USER_INIT);
   const [match, setMatch] = useState({});
-  const [alertMessage, setAlertMessage] = useState(null);
+  const [alertMessage, setAlertMessage] = useState({});
 
   const getCurrentUser = useCallback(() => {
     api
@@ -135,7 +135,7 @@ function App() {
   const handleAlertMessage = ({ type, message }) => {
     setAlertMessage({ type, message });
     setTimeout(() => {
-      setAlertMessage(null);
+      setAlertMessage({});
     }, 3000);
   };
 
@@ -167,6 +167,8 @@ function App() {
                 path="/signup"
                 element={<Signup handleSignup={handleSignup} />}
               />
+
+              {/* Routes for users logged in */}
               <Route
                 path="/"
                 element={
@@ -178,22 +180,34 @@ function App() {
                     />
                   </ProtectedRoute>
                 }
-              >
-                <Route
-                  path="/create-match"
-                  element={
+              />
+              <Route
+                path="/edit-profile"
+                element={
+                  <ProtectedRoute loggedIn={loggedIn}>
+                    <EditProfile handleUpdateUser={handleUpdateUser} />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Routes only for admin users */}
+              <Route
+                path="/create-match"
+                element={
+                  <ProtectedRoute loggedIn={loggedIn} requireAdmin={true}>
                     <CreateMatch handleCreateMatch={handleCreateMatch} />
-                  }
-                />
-                <Route
-                  path="/players"
-                  element={<PlayerList players={match.players} />}
-                />
-                <Route
-                  path="/edit-profile"
-                  element={<EditProfile handleUpdateUser={handleUpdateUser} />}
-                />
-              </Route>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/players"
+                element={
+                  <ProtectedRoute loggedIn={loggedIn} requireAdmin={true}>
+                    <PlayerList players={match.players} />
+                  </ProtectedRoute>
+                }
+              />
+
               <Route path="*" element={<Login handleLogin={handleLogin} />} />
             </Routes>
             <Footer />

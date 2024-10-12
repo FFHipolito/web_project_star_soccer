@@ -1,70 +1,104 @@
-# Getting Started with Create React App
+# Super Star Soccer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Project Overview
 
-## Available Scripts
+**Super Star Soccer** is a Single Page Application (SPA) developed in React that allows friends to organize amateur soccer matches on weekends. The application supports user management and match scheduling, providing a seamless experience for users to engage in sports activities.
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+- **User Types**:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Standard Users**: Can register, edit their profiles, and sign up for created matches.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Administrators**: In addition to standard user functions, administrators can create and end matches and view the list of players registered for each match.
 
-### `npm test`
+- **Form Validation**: The application includes error validation for forms to ensure that user input is correct before submission.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **API Call Alerts**: Success and error messages are displayed in response to API calls, enhancing user feedback.
 
-### `npm run build`
+- **Simulated API Calls**: All API calls are simulated using Promises within try-catch blocks, returning mock data as if connected to a live API.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Success/Error Logic**: Each API call has a 90% chance of success and a 10% chance of failure, utilizing `Math.random()` to simulate realistic API behavior.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Authentication**:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  **Login and Signup** functionality, including token management.
+  Protected routes that allow only logged-in users access, as well as routes restricted to administrators.
 
-### `npm run eject`
+- **Styling**:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+The application employs the BEM (Block Element Modifier) methodology for CSS and is responsive across various devices.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Development Process
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. **Branching Strategy**:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+   - New features are developed from the `stage-react-api` branch. Each feature branch is created for specific functionalities, ensuring a clean and organized codebase.
 
-## Learn More
+2. **Feature Branches**:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+   - When starting a new feature, create a branch off `stage-react-api` using the naming convention `feature/[feature-name]`.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+3. **Error Handling**:
 
-### Code Splitting
+   - Implemented using try-catch blocks to manage exceptions during API calls, ensuring that users receive appropriate feedback in case of issues.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Getting Started
 
-### Analyzing the Bundle Size
+### Prerequisites
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- Node.js
+- npm or yarn
 
-### Making a Progressive Web App
+### Installation
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+1. Clone the repository:
 
-### Advanced Configuration
+```
+   git clone https://github.com/FFHipolito/web_project_star_soccer.git
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+2. Navigate to the project directory:
 
-### Deployment
+```
+cd super-star-soccer
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+3. Install dependencies:
 
-### `npm run build` fails to minify
+```
+npm install
+# or
+yarn install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+4. Start the development server:
+
+```
+npm start
+# or
+yarn start
+```
+
+5. Open your browser and visit http://localhost:3000.
+
+## Access Instructions
+
+1. Create Your Account (Standard User):
+
+- Visit the signup page and register as a standard user.
+
+2. Access as Administrator:
+
+- Use the following credentials to log in as an administrator:
+  - Email: useradmin@email.com
+  - Password: 123456
+
+## Usage
+
+- Users can register for an account, log in, and start organizing matches.
+- Administrators can create new matches and manage user registrations.
+
+## Acknowledgments
+
+Thanks to the TRIPLETEN bootcamp instructors and fellow students for their support.

@@ -1,0 +1,11 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  background-color: #fff;
+  color: #00112c;
+  font-family: "inter", sans-serif;
+  font-size: 18px;
+  line-height: 21.78px;
+}

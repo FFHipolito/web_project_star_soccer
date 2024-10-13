@@ -70,3 +70,17 @@
 .main__button:hover {
   background-color: #ffbd59;
 }
+
+@media only screen and (max-width: 320px) {
+  .main {
+    max-width: 310px;
+  }
+
+  .main__card {
+    width: 306px;
+  }
+
+  .main__button {
+    width: 310px;
+  }
+}

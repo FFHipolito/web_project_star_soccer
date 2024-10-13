@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: auto;
+  margin: 0;
   background-color: #fff;
   color: #00112c;
   font-family: "inter", sans-serif;

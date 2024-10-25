@@ -6,8 +6,8 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    minlength: 2,
-    maxlength: 30,
+    minLength: 2,
+    maxLength: 30,
   },
   email: {
     type: String,
@@ -23,13 +23,20 @@ const userSchema = new mongoose.Schema({
   phone: {
     type: Number,
     required: true,
-    minlength: 10,
+    minLength: 10,
   },
   password: {
     type: String,
     required: true,
-    minlength: 6,
-    select: false,
+    minLength: 6,
+  },
+  isAdmin: {
+    type: Boolean,
+    default: true,
+  },
+  isSubscribed: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -37,7 +44,7 @@ userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email })
     .select("+password")
     .then((user) => {
-      const err = new Error("Senha ou e-mail incorreto");
+      const err = new Error("Password or e-mail incorrect");
       err.statusCode = 400;
       if (!user) {
         return Promise.reject(err);

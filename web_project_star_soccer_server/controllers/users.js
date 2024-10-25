@@ -46,38 +46,38 @@ function getUserInfo(req, res, next) {
     .catch(next);
 }
 
-function createUser(req, res, next) {
-  const { name, email, phone, password } = req.body;
+async function createUser(req, res, next) {
   try {
-    if (!email || !password) {
-      const err = new Error("Dados inválidos...");
+    const { name, email, phone, password } = req.body;
+    if (!name || !email || !phone || !password) {
+      const err = new Error("Missing data...");
       err.statusCode = 400;
       throw err;
     }
+
+    const newUser = await User.create({
+      name,
+      email,
+      phone,
+      password: bcrypt.hashSync(password, 10),
+    });
+
+    const token = jwt.sign(
+      { _id: newUser._id },
+      NODE_ENV === "production" ? JWT_SECRET : "super-strong-secret",
+      { expiresIn: "7d" }
+    );
+
+    if (!token) {
+      const err = new Error("Token inválido...");
+      err.statusCode = 401;
+      throw err;
+    }
+
+    res.send({ token });
   } catch (error) {
     next(error);
   }
-
-  bcrypt
-    .hash(password, 10)
-    .then((hash) => {
-      return User.create({
-        name,
-        email,
-        phone,
-        password: hash,
-      });
-    })
-    .then((user) => {
-      return res.status(201).send({
-        data: {
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
-        },
-      });
-    })
-    .catch(next);
 }
 
 function updateUserProfile(req, res, next) {

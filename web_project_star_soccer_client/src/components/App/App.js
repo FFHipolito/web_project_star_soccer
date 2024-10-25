@@ -119,8 +119,8 @@ function App() {
     setLoggedIn(true);
   };
 
-  const handleSignup = (user) => {
-    setUser(user);
+  const handleSignup = () => {
+    getCurrentUser();
     getCurrentMatch();
     setLoggedIn(true);
   };
@@ -144,7 +144,8 @@ function App() {
     const token = localStorage.getItem("jwt");
     if (token) {
       checkToken(token)
-        .then(() => {
+        .then((response) => {
+          setUser(response.data);
           setLoggedIn(true);
         })
         .catch((error) => {
@@ -153,7 +154,6 @@ function App() {
           handleLogout();
         });
 
-      getCurrentUser();
       getCurrentMatch();
     } else {
       handleLogout();

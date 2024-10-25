@@ -1,4 +1,5 @@
 import { userMock, matchMock } from "../mock-data";
+const BASE_URL = "http://localhost:3001";
 
 // generate true or false value for api calls randomly,
 // remove after backend implementation
@@ -31,22 +32,25 @@ class Api {
 
   async getUserInfo() {
     try {
-      const response = await new Promise((resolve, reject) => {
-        if (Math.random() < 0.95) {
-          resolve({
-            data: { ...userMock },
-          });
-        } else {
-          reject(new Error(ERROR_MESSAGE));
-        }
+      const response = await fetch(`${BASE_URL}/users/me`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          "Content-Type": "application/json",
+        },
       });
 
-      // return this._makeRequest("/user/me");
-      return response;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+
+      return await response.json();
     } catch (error) {
       console.error(error);
       throw error;
     }
+    //return this._makeRequest("/users/me");
   }
 
   async updateUserInfo(userData) {
@@ -77,13 +81,9 @@ class Api {
   async getMatch() {
     try {
       const response = await new Promise((resolve, reject) => {
-        if (Math.random() < 0.95) {
-          resolve({
-            data: { ...matchMock },
-          });
-        } else {
-          reject(new Error(ERROR_MESSAGE));
-        }
+        resolve({
+          data: { ...matchMock },
+        });
       });
 
       // return this._makeRequest("/match");

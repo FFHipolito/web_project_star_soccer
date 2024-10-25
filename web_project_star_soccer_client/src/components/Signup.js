@@ -31,9 +31,9 @@ function Signup({ handleSignup }) {
       return;
     }
 
-    signup({ name, email, phone, password, passwordConfirmation })
-      .then((response) => {
-        handleSignup(response.data.user);
+    signup(name, email, phone, password)
+      .then(() => {
+        handleSignup();
         navigate("/");
       })
       .catch((error) => {
@@ -78,6 +78,7 @@ function Signup({ handleSignup }) {
           id="phone"
           onChange={(e) => setPhone(e.target.value)}
           placeholder="Phone (99) 9999-9999"
+          minLength={10}
           required
           className="signup__input"
         />

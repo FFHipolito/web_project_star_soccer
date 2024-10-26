@@ -17,7 +17,7 @@ function EditProfile({ handleUpdateUser }) {
     e.preventDefault();
     const isFormValid = validateForm();
     if (!isFormValid) return;
-    handleUpdateUser({ name, email, phone, password });
+    handleUpdateUser(name, email, phone.toString(), password);
     navigate("/");
   };
 
@@ -29,7 +29,7 @@ function EditProfile({ handleUpdateUser }) {
       password === "" &&
       passwordConfirmation === ""
     ) {
-      setErrorMessage("Nothing was changed!");
+      setErrorMessage("Nothing has changed!");
       setTimeout(() => {
         setErrorMessage("");
       }, 2000);
@@ -80,6 +80,8 @@ function EditProfile({ handleUpdateUser }) {
           id="phone"
           onChange={(e) => setPhone(e.target.value)}
           placeholder="Phone (99) 9999-9999"
+          minLength={11}
+          maxLength={30}
           required
           className="edit__profile_input"
         />

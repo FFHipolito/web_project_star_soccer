@@ -1,42 +1,18 @@
 const BASE_URL = "http://localhost:3001";
 
-// generate true or false value for api calls randomly,
-// remove after backend implementation
-const ERROR_MESSAGE = "Ops, something went wrong!";
-const successApiCallRandomly = () => {
-  return Math.random() < 0.7;
-};
-
 class Api {
-  constructor(baseUrl, options) {
-    this.baseUrl = baseUrl;
-    this.options = options;
-  }
-
-  _makeRequest(endpoint, method = "GET", body = null) {
-    const options = {
-      method,
-      headers: { ...this.options.headers },
+  getHeader() {
+    return {
+      Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      "Content-Type": "application/json",
     };
-
-    if (body) {
-      options.body = JSON.stringify(body);
-    }
-
-    return fetch(`${this.baseUrl}${endpoint}`, options).then((res) => {
-      if (!res.ok) Promise.reject(Error`${res.status}`);
-      return res.json();
-    });
   }
 
   async getUserInfo() {
     try {
       const response = await fetch(`${BASE_URL}/users/me`, {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-          "Content-Type": "application/json",
-        },
+        headers: this.getHeader(),
       });
 
       if (!response.ok) {
@@ -51,25 +27,30 @@ class Api {
     }
   }
 
-  async updateUserInfo(userData) {
+  async updateUserInfo(name, email, phone, password) {
+    if (!name && !email && !phone && !password) {
+      throw new Error("Nothing has changed...");
+    }
+
+    let body = {};
+    if (name) body.name = name;
+    if (email) body.email = email;
+    if (phone) body.phone = phone;
+    if (password) body.password = password;
+
     try {
-      const response = await new Promise((resolve, reject) => {
-        if (successApiCallRandomly()) {
-          resolve({
-            ok: true,
-            message: "Profile updated!",
-            data: {
-              ...userData,
-              isAdmin: userData.email === "useradmin@email.com",
-            },
-          });
-        } else {
-          reject(new Error(ERROR_MESSAGE));
-        }
+      const response = await fetch(`${BASE_URL}/users/me`, {
+        method: "PATCH",
+        headers: this.getHeader(),
+        body: JSON.stringify({ ...body }),
       });
 
-      // return this._makeRequest("/user/me", "PATCH", { userData });
-      return response;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+
+      return await response.json();
     } catch (error) {
       console.error(error);
       throw error;

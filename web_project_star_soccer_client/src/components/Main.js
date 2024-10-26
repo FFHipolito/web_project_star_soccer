@@ -1,23 +1,22 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-function Main({
-  match,
-  handleSubscription,
-  hadleCloseMatch,
-  userSubscribedToMatch,
-}) {
+function Main({ match, handleSubscription, hadleCloseMatch }) {
   const user = useContext(CurrentUserContext);
   const hasMatch = Object.keys(match).length > 0;
   const navigate = useNavigate();
   const token = localStorage.getItem("jwt");
+  const [userIsSubscribed, setUserIsSubscribed] = useState(false);
 
   useEffect(() => {
     if (!token) {
       navigate("/login");
     }
-  }, [token, navigate]);
+    if (user && Object.keys(match).length > 0) {
+      setUserIsSubscribed(match.players.some((el) => el._id === user._id));
+    }
+  }, [user, match, token, navigate]);
 
   const title = hasMatch ? "Next Match" : "There is no match created yet.";
   return (
@@ -33,7 +32,7 @@ function Main({
       {hasMatch && (
         <>
           <div className="main__card">
-            {userSubscribedToMatch && (
+            {userIsSubscribed && (
               <span className="main__card_subscribed">
                 {"You are subscribed!"}
               </span>
@@ -48,7 +47,7 @@ function Main({
             className="main__button"
             onClick={handleSubscription}
           >
-            {userSubscribedToMatch ? "Unsubscribe" : "I gonna play!"}
+            {userIsSubscribed ? "Unsubscribe" : "I gonna play!"}
           </button>
           {user.isAdmin && (
             <>

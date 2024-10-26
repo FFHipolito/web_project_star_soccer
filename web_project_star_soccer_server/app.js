@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const usersRouter = require("./routes/users");
+const matchesRouter = require("./routes/matches");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { errors, celebrate, Joi } = require("celebrate");
@@ -90,6 +91,7 @@ app.use(
 );
 
 app.use("/users", usersRouter);
+app.use("/matches", matchesRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Request not found." });

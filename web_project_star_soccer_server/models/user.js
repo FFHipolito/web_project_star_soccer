@@ -32,10 +32,6 @@ const userSchema = new mongoose.Schema({
   },
   isAdmin: {
     type: Boolean,
-    default: true,
-  },
-  isSubscribed: {
-    type: Boolean,
     default: false,
   },
 });

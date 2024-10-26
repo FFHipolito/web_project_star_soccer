@@ -1,4 +1,3 @@
-import { userMock, matchMock } from "../mock-data";
 const BASE_URL = "http://localhost:3001";
 
 // generate true or false value for api calls randomly,
@@ -50,7 +49,6 @@ class Api {
       console.error(error);
       throw error;
     }
-    //return this._makeRequest("/users/me");
   }
 
   async updateUserInfo(userData) {
@@ -80,105 +78,88 @@ class Api {
 
   async getMatch() {
     try {
-      const response = await new Promise((resolve, reject) => {
-        resolve({
-          data: { ...matchMock },
-        });
+      const response = await fetch(`${BASE_URL}/matches/match`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          "Content-Type": "application/json",
+        },
       });
 
-      // return this._makeRequest("/match");
-      return response;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+
+      return await response.json();
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
 
-  async createMatch(matchData) {
+  async createMatch(date, time) {
     try {
-      const response = await new Promise((resolve, reject) => {
-        if (successApiCallRandomly()) {
-          resolve({
-            ok: true,
-            message: "Match created!",
-            data: {
-              id: "1",
-              date: matchData.date,
-              time: matchData.time,
-              players: [],
-            },
-          });
-        } else {
-          reject(new Error(ERROR_MESSAGE));
-        }
+      const response = await fetch(`${BASE_URL}/matches/match`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ date, time }),
       });
 
-      // return this._makeRequest("/match", "POST", { matchData });
-      return response;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+
+      return await response.json();
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
 
-  async subscribeMatch(match, user) {
+  async subscribeMatch(matchId, userId) {
     try {
-      let playersUpdated = [];
-      // if user is already subscribed remove him, if not add him to the match
-      user.isSubscribed
-        ? (playersUpdated = match.players.filter(
-            (player) => player.id !== user.id
-          ))
-        : (playersUpdated = [...match.players, user]);
-
-      const response = await new Promise((resolve, reject) => {
-        const successMessage = `You ${
-          user.isSubscribed ? "unsubscribed" : "subscribed"
-        } for the match!`;
-
-        if (successApiCallRandomly()) {
-          resolve({
-            ok: true,
-            message: successMessage,
-            data: {
-              user: {
-                ...user,
-                isSubscribed: !user.isSubscribed,
-              },
-              match: {
-                ...match,
-                players: playersUpdated,
-              },
-            },
-          });
-        } else {
-          reject(new Error(ERROR_MESSAGE));
-        }
+      const response = await fetch(`${BASE_URL}/matches/match/${matchId}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
       });
 
-      // return this._makeRequest(/match/${matchId}, "POST", userId);
-      return response;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+
+      return await response.json();
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
 
-  async deleteMatch(matchId) {
+  async closeMatch(matchId) {
     try {
-      const response = await new Promise((resolve, reject) => {
-        if (successApiCallRandomly()) {
-          resolve({
-            ok: true,
-            message: "Match closed!",
-          });
-        } else {
-          reject(new Error(ERROR_MESSAGE));
-        }
+      const response = await fetch(`${BASE_URL}/matches/match/${matchId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          "Content-Type": "application/json",
+        },
       });
 
-      // return this._makeRequest(/match/${matchId}, "DELETE");
-      return response;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+
+      return await response.json();
     } catch (error) {
       console.error(error);
       throw error;

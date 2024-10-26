@@ -51,7 +51,7 @@ app.use(express.json());
 
 app.get("/crash-test", () => {
   setTimeout(() => {
-    throw new Error("O servidor travará agora");
+    throw new Error("Server will stop now!");
   }, 0);
 });
 
@@ -72,8 +72,8 @@ app.post(
     body: Joi.object().keys({
       email: Joi.string().required().email(),
       password: Joi.string().required().min(6),
-      name: Joi.string().optional().min(2).max(30),
-      phone: Joi.string().optional().min(10).max(30),
+      name: Joi.string().required().min(2).max(30),
+      phone: Joi.string().required().min(10).max(30),
     }),
   }),
   createUser

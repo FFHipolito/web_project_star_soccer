@@ -1,5 +1,4 @@
 const Match = require("../models/match");
-const User = require("../models/user");
 
 async function getMatchInfo(req, res, next) {
   try {
@@ -19,7 +18,7 @@ async function createMatch(req, res, next) {
       time,
     });
 
-    res.send({ message: "Match created!", data: newMatch });
+    res.send({ message: "Match created successfully!", data: newMatch });
   } catch (error) {
     next(error);
   }
@@ -32,7 +31,7 @@ async function subscribeMatch(req, res, next) {
   try {
     const match = await Match.findById(matchId);
     if (!match) {
-      return res.status(404).send({ message: "Partida não encontrada" });
+      return res.status(404).send({ message: "Match not found!" });
     }
 
     const userIsSubscribed = match.players.includes(userId);

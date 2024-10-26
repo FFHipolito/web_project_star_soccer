@@ -5,38 +5,11 @@ const User = require("../models/user");
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-function getUsers(req, res) {
-  return User.find({})
-    .then((users) => {
-      if (!users) {
-        const err = new Error("Ocorreu um erro ao buscar usuários");
-        err.status = 500;
-        throw err;
-      }
-      res.send({ data: users });
-    })
-    .catch(next);
-}
-
-function getUserById(req, res) {
-  const { userId } = req.params;
-  return User.findById(userId)
-    .orFail(() => {
-      const err = new Error("Usuário não encontrado");
-      err.status = 404;
-      throw err;
-    })
-    .then((user) => {
-      res.send({ data: user });
-    })
-    .catch(next);
-}
-
 function getUserInfo(req, res, next) {
   const { user } = req;
   return User.findById(user._id)
     .orFail(() => {
-      const err = new Error("Usuário não encontrado");
+      const err = new Error("User not found!");
       err.statusCode = 404;
       throw err;
     })
@@ -69,7 +42,7 @@ async function createUser(req, res, next) {
     );
 
     if (!token) {
-      const err = new Error("Token inválido...");
+      const err = new Error("Invalid token...");
       err.statusCode = 401;
       throw err;
     }
@@ -83,7 +56,7 @@ async function createUser(req, res, next) {
 function updateUserProfile(req, res, next) {
   const { name, email, phone, password } = req.body;
   const userId = req.user._id;
-  const userUpdated = {};
+  let userUpdated = {};
 
   if (name) {
     userUpdated.name = name;
@@ -95,23 +68,23 @@ function updateUserProfile(req, res, next) {
     userUpdated.phone = phone;
   }
   if (password) {
-    userUpdated.password = password;
+    userUpdated.password = bcrypt.hashSync(password, 10);
   }
 
   if (!name && !email && !phone && !password) {
-    return res.status(400).send({ error: "Dados inválidos..." });
+    return res.status(400).send({ error: "Invalid data..." });
   }
 
   return User.findByIdAndUpdate(userId, userUpdated, {
     new: true,
   })
     .orFail(() => {
-      const err = new Error("Usuário não encontrado");
+      const err = new Error("User not found!");
       err.status = 404;
       throw err;
     })
     .then((user) => {
-      res.send({ data: user });
+      res.send({ data: user, message: "Profile updated successfully!" });
     })
     .catch(next);
 }
@@ -120,7 +93,7 @@ function login(req, res, next) {
   const { email, password } = req.body;
   try {
     if (!email && !password) {
-      const err = new Error("Dados inválidos...");
+      const err = new Error("Invalid data...");
       err.statusCode = 400;
       throw err;
     }
@@ -138,7 +111,7 @@ function login(req, res, next) {
         }
       );
       if (!token) {
-        const err = new Error("Token inválido...");
+        const err = new Error("Invalid token...");
         err.statusCode = 401;
         throw err;
       }
@@ -148,8 +121,6 @@ function login(req, res, next) {
 }
 
 module.exports = {
-  getUsers,
-  getUserById,
   getUserInfo,
   createUser,
   updateUserProfile,

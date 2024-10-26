@@ -17,13 +17,13 @@ const userSchema = new mongoose.Schema({
       validator(value) {
         return validator.isEmail(value);
       },
-      message: (props) => `${props.value} E-mail inválido!`,
+      message: (props) => `${props.value} Invalid e-mail!`,
     },
   },
   phone: {
-    type: Number,
+    type: String,
     required: true,
-    minLength: 10,
+    minLength: 11,
   },
   password: {
     type: String,
@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
   },
   isAdmin: {
     type: Boolean,
-    default: false,
+    default: true,
   },
 });
 

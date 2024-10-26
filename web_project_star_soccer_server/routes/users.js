@@ -1,28 +1,16 @@
 const router = require("express").Router();
 const { celebrate, Joi } = require("celebrate");
-const {
-  getUsers,
-  getUserById,
-  getUserInfo,
-  updateUserProfile,
-} = require("../controllers/users");
+const { getUserInfo, updateUserProfile } = require("../controllers/users");
 
-router.get("/", getUsers);
 router.get("/me", getUserInfo);
-router.get(
-  "/:userId",
-  celebrate({
-    params: Joi.object().keys({
-      userId: Joi.string().alphanum().length(24),
-    }),
-  }),
-  getUserById
-);
 router.patch(
   "/me",
   celebrate({
     body: Joi.object().keys({
-      name: Joi.string().min(2).max(30).optional(),
+      name: Joi.string().optional().min(2).max(30),
+      email: Joi.string().optional().email(),
+      phone: Joi.string().optional().min(11).max(30),
+      password: Joi.string().optional().min(6),
     }),
   }),
   updateUserProfile

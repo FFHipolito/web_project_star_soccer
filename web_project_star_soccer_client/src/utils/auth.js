@@ -1,14 +1,4 @@
-import { userMock } from "../mock-data";
 const BASE_URL = "http://localhost:3001";
-
-// generate true or false value for api calls randomly,
-// remove after backend implementation
-const INVALID_DATA = "Invalid e-mail or password!";
-const EMAIL_REGISTERED = "This is email is already registered!";
-const ERROR_MESSAGE = "Ops, something went wrong!";
-const successApiCallRandomly = () => {
-  return Math.random() < 1;
-};
 
 export const authorize = async (email, password) => {
   try {

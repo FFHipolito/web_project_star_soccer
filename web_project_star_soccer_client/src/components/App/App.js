@@ -29,6 +29,7 @@ function App() {
   const [user, setUser] = useState(USER_INIT);
   const [match, setMatch] = useState({});
   const [alertMessage, setAlertMessage] = useState({});
+  const [userSubscribedToMatch, setUserSubscribedToMatch] = useState(false);
 
   const getCurrentUser = useCallback(() => {
     api
@@ -47,7 +48,9 @@ function App() {
     api
       .getMatch()
       .then((response) => {
-        setMatch(response.data);
+        const match = response.data;
+        setMatch(match);
+        setUserSubscribedToMatch(checkUserSubscribed(match));
       })
       .catch((error) => {
         handleLogout();
@@ -72,11 +75,11 @@ function App() {
 
   const handleMatchSubscription = () => {
     api
-      .subscribeMatch(match, user)
+      .subscribeMatch(match._id, user._id)
       .then((response) => {
-        setUser(response.data.user);
-        setMatch(response.data.match);
-        const { message } = response;
+        const { message, data } = response;
+        setMatch(data);
+        setUserSubscribedToMatch(checkUserSubscribed(data));
         handleAlertMessage({ type: "success", message });
       })
       .catch((error) => {
@@ -85,12 +88,12 @@ function App() {
       });
   };
 
-  const handleCreateMatch = (matchData) => {
+  const handleCreateMatch = (date, time) => {
     api
-      .createMatch(matchData)
+      .createMatch(date, time)
       .then((response) => {
-        setMatch(response.data);
-        const { message } = response;
+        const { message, data } = response;
+        setMatch(data);
         handleAlertMessage({ type: "success", message });
       })
       .catch((error) => {
@@ -101,10 +104,10 @@ function App() {
 
   const hadleCloseMatch = () => {
     api
-      .deleteMatch(match.id)
+      .closeMatch(match._id)
       .then((response) => {
-        setMatch({});
-        const { message } = response;
+        const { message, data } = response;
+        setMatch(data);
         handleAlertMessage({ type: "success", message });
       })
       .catch((error) => {
@@ -138,6 +141,11 @@ function App() {
     setTimeout(() => {
       setAlertMessage({});
     }, 3000);
+  };
+
+  const checkUserSubscribed = (match) => {
+    if (!user || !match) return;
+    return match.players?.some((el) => el._id === user._id);
   };
 
   useEffect(() => {
@@ -186,6 +194,7 @@ function App() {
                   <ProtectedRoute loggedIn={loggedIn}>
                     <Main
                       match={match}
+                      userSubscribedToMatch={userSubscribedToMatch}
                       handleSubscription={handleMatchSubscription}
                       hadleCloseMatch={hadleCloseMatch}
                     />

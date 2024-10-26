@@ -2,7 +2,12 @@ import { useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-function Main({ match, handleSubscription, hadleCloseMatch }) {
+function Main({
+  match,
+  handleSubscription,
+  hadleCloseMatch,
+  userSubscribedToMatch,
+}) {
   const user = useContext(CurrentUserContext);
   const hasMatch = Object.keys(match).length > 0;
   const navigate = useNavigate();
@@ -28,7 +33,7 @@ function Main({ match, handleSubscription, hadleCloseMatch }) {
       {hasMatch && (
         <>
           <div className="main__card">
-            {user.isSubscribed && (
+            {userSubscribedToMatch && (
               <span className="main__card_subscribed">
                 {"You are subscribed!"}
               </span>
@@ -43,7 +48,7 @@ function Main({ match, handleSubscription, hadleCloseMatch }) {
             className="main__button"
             onClick={handleSubscription}
           >
-            {user.isSubscribed ? "Unsubscribe" : "I gonna play!"}
+            {userSubscribedToMatch ? "Unsubscribe" : "I gonna play!"}
           </button>
           {user.isAdmin && (
             <>

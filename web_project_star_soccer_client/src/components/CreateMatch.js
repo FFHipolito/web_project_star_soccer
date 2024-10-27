@@ -14,7 +14,7 @@ function CreateMatch({ handleCreateMatch }) {
     e.preventDefault();
     const dateFormatted = formatDateToDisplay(date);
     setDate(dateFormatted);
-    handleCreateMatch({ date: dateFormatted, time });
+    handleCreateMatch(dateFormatted, time);
     navigate("/");
   };
 

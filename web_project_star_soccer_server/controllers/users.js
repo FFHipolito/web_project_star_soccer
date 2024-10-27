@@ -13,8 +13,10 @@ function getUserInfo(req, res, next) {
       err.statusCode = 404;
       throw err;
     })
-    .then((userData) => {
-      res.send({ data: userData });
+    .then((user) => {
+      // hide password propriety before sending
+      user.password = undefined;
+      res.send({ data: user });
     })
     .catch(next);
 }
@@ -34,6 +36,12 @@ async function createUser(req, res, next) {
       phone,
       password: bcrypt.hashSync(password, 10),
     });
+
+    if (!newUser) {
+      const err = new Error("Error creating user!");
+      err.statusCode = 404;
+      throw err;
+    }
 
     const token = jwt.sign(
       { _id: newUser._id },
@@ -84,6 +92,8 @@ function updateUserProfile(req, res, next) {
       throw err;
     })
     .then((user) => {
+      // hide password propriety before sending
+      user.password = undefined;
       res.send({ data: user, message: "Profile updated successfully!" });
     })
     .catch(next);

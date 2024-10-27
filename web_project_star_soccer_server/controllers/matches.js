@@ -2,9 +2,12 @@ const Match = require("../models/match");
 
 async function getMatchInfo(req, res, next) {
   try {
-    const openMatch = await Match.findOne().populate("players").exec();
+    const match = await Match.findOne().populate("players").exec();
 
-    res.send({ data: openMatch || {} });
+    // hide password propriety before sending
+    if (match) match.players.forEach((player) => (player.password = undefined));
+
+    res.send({ data: match || {} });
   } catch (error) {
     next(error);
   }
@@ -18,7 +21,13 @@ async function createMatch(req, res, next) {
       time,
     });
 
-    res.send({ message: "Match created successfully!", data: newMatch });
+    if (!newMatch) {
+      const err = new Error("Error creating match!");
+      err.statusCode = 404;
+      throw err;
+    }
+
+    res.send({ data: newMatch, message: "Match created successfully!" });
   } catch (error) {
     next(error);
   }
@@ -46,6 +55,9 @@ async function subscribeMatch(req, res, next) {
       { new: true, useFindAndModify: false }
     ).populate("players");
 
+    // hide password propriety before sending
+    matchUpdated.players.forEach((player) => (player.password = undefined));
+
     res.send({
       data: matchUpdated,
       message: userIsSubscribed
@@ -62,7 +74,7 @@ async function deleteMatch(req, res, next) {
   try {
     await Match.findByIdAndDelete(matchId);
 
-    res.send({ message: "Match closed!", data: {} });
+    res.send({ data: {}, message: "Match closed!" });
   } catch (error) {
     next(error);
   }

@@ -8,8 +8,17 @@ function Main({ match, handleSubscription, hadleCloseMatch }) {
   const navigate = useNavigate();
   const token = localStorage.getItem("jwt");
   const [userIsSubscribed, setUserIsSubscribed] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!user) {
+      setLoading(true);
+    } else {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    }
+
     if (!token) {
       navigate("/login");
     }
@@ -19,6 +28,11 @@ function Main({ match, handleSubscription, hadleCloseMatch }) {
   }, [user, match, token, navigate]);
 
   const title = hasMatch ? "Next Match" : "There is no match created yet.";
+
+  if (loading) {
+    return <h1>Loading...</h1>;
+  }
+
   return (
     <div className="main">
       <h2 className="main__title">{title}</h2>

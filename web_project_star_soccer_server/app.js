@@ -101,8 +101,10 @@ app.use(errors());
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
+  console.error("Server Error:", err);
   res.status(statusCode).send({
-    message: statusCode === 500 ? "A server error has occurred" : message,
+    message: message,
+    detail: statusCode === 500 ? err.stack : undefined
   });
 });
 

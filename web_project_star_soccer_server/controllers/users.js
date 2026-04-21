@@ -1,24 +1,29 @@
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const { PrismaClient } = require("@prisma/client");
 
+const prisma = new PrismaClient();
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-function getUserInfo(req, res, next) {
+async function getUserInfo(req, res, next) {
   const { user } = req;
-  return User.findById(user._id)
-    .orFail(() => {
+  try {
+    const foundUser = await prisma.user.findUnique({
+      where: { id: user._id },
+    });
+
+    if (!foundUser) {
       const err = new Error("User not found!");
       err.statusCode = 404;
       throw err;
-    })
-    .then((user) => {
-      // hide password propriety before sending
-      user.password = undefined;
-      res.send({ data: user });
-    })
-    .catch(next);
+    }
+
+    foundUser.password = undefined;
+    res.send({ data: foundUser });
+  } catch (error) {
+    next(error);
+  }
 }
 
 async function createUser(req, res, next) {
@@ -30,11 +35,13 @@ async function createUser(req, res, next) {
       throw err;
     }
 
-    const newUser = await User.create({
-      name,
-      email,
-      phone,
-      password: bcrypt.hashSync(password, 10),
+    const newUser = await prisma.user.create({
+      data: {
+        name,
+        email,
+        phone,
+        password: bcrypt.hashSync(password, 10),
+      },
     });
 
     if (!newUser) {
@@ -44,90 +51,91 @@ async function createUser(req, res, next) {
     }
 
     const token = jwt.sign(
-      { _id: newUser._id },
+      { _id: newUser.id },
       NODE_ENV === "production" ? JWT_SECRET : "super-strong-secret",
       { expiresIn: "7d" }
     );
 
-    if (!token) {
-      const err = new Error("Invalid token...");
-      err.statusCode = 401;
-      throw err;
-    }
-
     res.send({ token });
   } catch (error) {
+    if (error.code === 'P2002') {
+      const err = new Error("E-mail already in use");
+      err.statusCode = 409;
+      return next(err);
+    }
     next(error);
   }
 }
 
-function updateUserProfile(req, res, next) {
+async function updateUserProfile(req, res, next) {
   const { name, email, phone, password } = req.body;
   const userId = req.user._id;
-  let userUpdated = {};
-
-  if (name) {
-    userUpdated.name = name;
-  }
-  if (email) {
-    userUpdated.email = email;
-  }
-  if (phone) {
-    userUpdated.phone = phone;
-  }
-  if (password) {
-    userUpdated.password = bcrypt.hashSync(password, 10);
-  }
 
   if (!name && !email && !phone && !password) {
     return res.status(400).send({ error: "Invalid data..." });
   }
 
-  return User.findByIdAndUpdate(userId, userUpdated, {
-    new: true,
-  })
-    .orFail(() => {
+  let userUpdated = {};
+
+  if (name) userUpdated.name = name;
+  if (email) userUpdated.email = email;
+  if (phone) userUpdated.phone = phone;
+  if (password) userUpdated.password = bcrypt.hashSync(password, 10);
+
+  try {
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: userUpdated,
+    });
+
+    user.password = undefined;
+    res.send({ data: user, message: "Profile updated successfully!" });
+  } catch (error) {
+    if (error.code === 'P2025') {
       const err = new Error("User not found!");
-      err.status = 404;
-      throw err;
-    })
-    .then((user) => {
-      // hide password propriety before sending
-      user.password = undefined;
-      res.send({ data: user, message: "Profile updated successfully!" });
-    })
-    .catch(next);
+      err.statusCode = 404;
+      return next(err);
+    }
+    next(error);
+  }
 }
 
-function login(req, res, next) {
+async function login(req, res, next) {
   const { email, password } = req.body;
   try {
-    if (!email && !password) {
+    if (!email || !password) {
       const err = new Error("Invalid data...");
       err.statusCode = 400;
       throw err;
     }
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      const err = new Error("Password or e-mail incorrect");
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const matched = await bcrypt.compare(password, user.password);
+    if (!matched) {
+      const err = new Error("Password or e-mail incorrect");
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const token = jwt.sign(
+      { _id: user.id },
+      NODE_ENV === "production" ? JWT_SECRET : "super-strong-secret",
+      { expiresIn: "7d" }
+    );
+
+    res.send({ token });
   } catch (error) {
     next(error);
   }
-
-  return User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        NODE_ENV === "production" ? JWT_SECRET : "super-strong-secret",
-        {
-          expiresIn: "7d",
-        }
-      );
-      if (!token) {
-        const err = new Error("Invalid token...");
-        err.statusCode = 401;
-        throw err;
-      }
-      res.send({ token });
-    })
-    .catch(next);
 }
 
 module.exports = {

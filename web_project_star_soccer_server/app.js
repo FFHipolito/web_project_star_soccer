@@ -1,6 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
 const usersRouter = require("./routes/users");
 const matchesRouter = require("./routes/matches");
 const bodyParser = require("body-parser");
@@ -107,19 +106,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-mongoose
-  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/suppersoccer")
-  .then(() => {
-    console.log(`MongoDB connected...`);
-
-    if (process.env.NODE_ENV !== "production") {
-      app.listen(PORT, () => {
-        console.log(`listening on port ${PORT}`);
-      });
-    }
-  })
-  .catch((err) => {
-    console.log(err);
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`listening on port ${PORT}`);
   });
+}
 
 module.exports = app;

@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3001";
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3001";
 
 class Api {
   getHeader() {
@@ -148,7 +148,7 @@ class Api {
   }
 }
 
-const api = new Api("http://localhost:3001", {
+const api = new Api(BASE_URL, {
   headers: {
     Authorization: `Bearer ${localStorage.getItem("jwt")}`,
     "Content-Type": "application/json",

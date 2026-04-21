@@ -108,14 +108,18 @@ app.use((err, req, res, next) => {
 });
 
 mongoose
-  .connect("mongodb://localhost:27017/suppersoccer")
+  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/suppersoccer")
   .then(() => {
     console.log(`MongoDB connected...`);
 
-    app.listen(PORT, () => {
-      console.log(`listening on port ${PORT}`);
-    });
+    if (process.env.NODE_ENV !== "production") {
+      app.listen(PORT, () => {
+        console.log(`listening on port ${PORT}`);
+      });
+    }
   })
   .catch((err) => {
     console.log(err);
   });
+
+module.exports = app;

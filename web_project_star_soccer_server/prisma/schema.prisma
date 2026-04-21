@@ -16,6 +16,8 @@ model User {
   password String
   isAdmin  Boolean @default(false)
   matches  Match[] @relation("MatchPlayers")
+
+  @@map("users")
 }
 
 model Match {
@@ -23,4 +25,6 @@ model Match {
   date    String
   time    String
   players User[]   @relation("MatchPlayers")
+
+  @@map("matches")
 }

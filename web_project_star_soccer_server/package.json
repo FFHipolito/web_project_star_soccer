@@ -6,7 +6,7 @@
     "lint": "eslint .",
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "build": "prisma generate && prisma db push --accept-data-loss",
+    "build": "prisma db push --accept-data-loss",
     "postinstall": "prisma generate"
   },
   "keywords": [
